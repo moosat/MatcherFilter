@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcher.Contracts", "Matcher.Contracts\Matcher.Contracts.csproj", "{C91808AC-44B3-4464-9EA0-DA3E54C53C16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcher.BaseRules", "Matcher.BaseRules\Matcher.BaseRules.csproj", "{1BBCB2DC-3D70-492C-8219-F3FC170087F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{56A7660D-7855-4410-BE11-5EB8A56D51C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C91808AC-44B3-4464-9EA0-DA3E54C53C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91808AC-44B3-4464-9EA0-DA3E54C53C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91808AC-44B3-4464-9EA0-DA3E54C53C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91808AC-44B3-4464-9EA0-DA3E54C53C16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBCB2DC-3D70-492C-8219-F3FC170087F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBCB2DC-3D70-492C-8219-F3FC170087F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBCB2DC-3D70-492C-8219-F3FC170087F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBCB2DC-3D70-492C-8219-F3FC170087F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
