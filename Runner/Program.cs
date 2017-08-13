@@ -9,17 +9,15 @@ namespace Runner
     {
         static void Main(string[] args)
         {
-            var runner = new Runner();
             var rulesDllPath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Matcher.BaseRules\bin\Debug\Matcher.BaseRules.dll";
-            runner.InitRuleFactories(rulesDllPath);
-
             var rulePath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Rules.txt";
-
-            runner.InstansiateRules(rulePath);
-
             var textPath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Text.txt";
 
+            var runner = new Runner(rulePath, textPath);
+            runner.InitRuleFactories(rulesDllPath);
+            runner.InstansiateRules(rulePath);
             runner.RunTheApplyRule(textPath);
+
             Console.ReadKey();
         }
     }

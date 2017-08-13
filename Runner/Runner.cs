@@ -16,9 +16,18 @@ namespace Runner
         readonly Container _container;
         private readonly List<IRule> _allRulesPrototypes;
         private readonly SortedList<long, string> _sortedOutputLines;
+        private readonly RuleBacket _ruleBacket = new RuleBacket();
+        private readonly string _resultTxtPath;
+        private readonly string _textTxtPath;
+        private readonly string _ruleTxtPath;
 
-        public Runner()
+        public Runner(string rulePath, string textPath)
         {
+            _ruleTxtPath = rulePath;
+            _textTxtPath = textPath;
+
+            _resultTxtPath =  Path.Combine(Environment.CurrentDirectory, "Result.txt");
+
             _allRulesPrototypes = new List<IRule>();
             _container = new Container();
             _outputLines = new BlockingCollection<OutputLine>(100);
@@ -45,6 +54,8 @@ namespace Runner
         }
 
         private readonly BlockingCollection<OutputLine> _outputLines;
+        private long _lastFlushedIndex = -1;
+
         public void RunTheApplyRule(string textPath)
         {
             var applyRule = _ruleBacket.GetRule("APPLY");
@@ -53,7 +64,9 @@ namespace Runner
             Parallel.ForEach(File.ReadLines(textPath), (line, state, linenumber) =>
             {
                 if (applyRule.IsMatch(line))
-                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = line});
+                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = linenumber + ":" + line});
+                else
+                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = null});
 
             });
             _outputLines.CompleteAdding();
@@ -72,14 +85,18 @@ namespace Runner
                     {
                         line = _outputLines.Take();
                     }
-                    catch (InvalidOperationException e) { }
+                    catch (InvalidOperationException) { }
                    
                     if (line != null)
                     {
                         _sortedOutputLines.Add(line.LineNumber, line.Line);
-                        if (_sortedOutputLines.Last().Key - _sortedOutputLines.First().Key ==
-                            _sortedOutputLines.Count - 1)
+                        var firstIndex = _sortedOutputLines.Keys.First();
+                        var lastIndex = _sortedOutputLines.Keys.Last();
+
+                        if ( (lastIndex - firstIndex == _sortedOutputLines.Count - 1) &&
+                            firstIndex == _lastFlushedIndex+1 )
                         {
+                            _lastFlushedIndex = lastIndex;
                             FlushLinesToOutput();
                         }
                     }
@@ -88,14 +105,12 @@ namespace Runner
         }
 
         private void FlushLinesToOutput()
-        {
-            foreach (var line in _sortedOutputLines.Values)
-            {
-                Console.WriteLine(line);
-            }
+        {     
+            File.AppendAllLines(_resultTxtPath, _sortedOutputLines.Values.Where(x => x != null));
+            _sortedOutputLines.Clear();
         }
 
-        private readonly RuleBacket _ruleBacket = new RuleBacket();
+
         private void AddRuleFromLine(string ruleLine)
         {
             var ruleElements = ruleLine.Split(' ').ToList();
