@@ -2,7 +2,7 @@ using Matcher.Contracts;
 
 namespace Matcher.BaseRules
 {
-    public class EndWithRule:BaseRule
+    public class EndWithRule:StringRule
     {
         public override string TypeName => "EndWith";
   

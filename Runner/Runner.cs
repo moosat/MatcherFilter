@@ -42,7 +42,7 @@ namespace Runner
    //     private BlockingCollection<string>
         public void RunTheApplyRule(string textPath)
         {
-            var applyRule = _ruleBacket.GetRule("R1");
+            var applyRule = _ruleBacket.GetRule("APPLY");
 
             //TODO: read line by line
             var lines = File.ReadAllLines(textPath);
@@ -63,7 +63,10 @@ namespace Runner
             ruleElements.RemoveAt(0);
             var ruleContent = string.Join(" ", ruleElements);
             if (ruleName == "APPLY")
+            {
+                ruleContent = ruleType;
                 ruleType = ruleName;
+            }
             var rulePrototype = _allRulesPrototypes.Find(x => x.TypeName == ruleType); // change to dictionary
             var instanseRule = rulePrototype.Clone();
             instanseRule.InitRule(ruleName, ruleContent, _ruleBacket);
