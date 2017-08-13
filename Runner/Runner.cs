@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Matcher.Contracts;
 using SimpleInjector;
 
@@ -14,11 +15,14 @@ namespace Runner
     {
         readonly Container _container;
         private readonly List<IRule> _allRulesPrototypes;
+        private readonly SortedList<long, string> _sortedOutputLines;
 
         public Runner()
         {
             _allRulesPrototypes = new List<IRule>();
             _container = new Container();
+            _outputLines = new BlockingCollection<OutputLine>(100);
+            _sortedOutputLines = new SortedList<long, string>();
         }
 
         public void InitRuleFactories(string path)
@@ -39,17 +43,55 @@ namespace Runner
                 AddRuleFromLine(ruleLine);
             }
         }
-   //     private BlockingCollection<string>
+
+        private readonly BlockingCollection<OutputLine> _outputLines;
         public void RunTheApplyRule(string textPath)
         {
             var applyRule = _ruleBacket.GetRule("APPLY");
 
-            //TODO: read line by line
-            var lines = File.ReadAllLines(textPath);
-            foreach (var line in lines)
+            var consumerTask = Consume();
+            Parallel.ForEach(File.ReadLines(textPath), (line, state, linenumber) =>
             {
                 if (applyRule.IsMatch(line))
-                    Console.WriteLine(line);
+                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = line});
+
+            });
+            _outputLines.CompleteAdding();
+            consumerTask.Wait();
+        }
+
+        private Task Consume()
+        {
+            return Task.Run(() =>
+            {
+                while (!_outputLines.IsCompleted)
+                {
+                    OutputLine line = null;
+
+                    try
+                    {
+                        line = _outputLines.Take();
+                    }
+                    catch (InvalidOperationException e) { }
+                   
+                    if (line != null)
+                    {
+                        _sortedOutputLines.Add(line.LineNumber, line.Line);
+                        if (_sortedOutputLines.Last().Key - _sortedOutputLines.First().Key ==
+                            _sortedOutputLines.Count - 1)
+                        {
+                            FlushLinesToOutput();
+                        }
+                    }
+                }
+            });
+        }
+
+        private void FlushLinesToOutput()
+        {
+            foreach (var line in _sortedOutputLines.Values)
+            {
+                Console.WriteLine(line);
             }
         }
 
@@ -72,5 +114,11 @@ namespace Runner
             instanseRule.InitRule(ruleName, ruleContent, _ruleBacket);
             _ruleBacket.AddRule(instanseRule);           
         }
+        private class OutputLine
+        {
+            public string Line { get; set; }
+            public long LineNumber { get; set; }
+        }
+
     }
 }
