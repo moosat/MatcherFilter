@@ -17,16 +17,16 @@ namespace Runner
         private readonly List<IRule> _allRulesPrototypes;
         private readonly SortedList<long, string> _sortedOutputLines;
         private readonly RuleBacket _ruleBacket = new RuleBacket();
-        private readonly string _resultTxtPath;
-        private readonly string _textTxtPath;
-        private readonly string _ruleTxtPath;
+        private readonly string _resultPath;
+        private readonly string _textPath;
+        private readonly string _rulesPath;
 
-        public Runner(string rulePath, string textPath)
+        public Runner(string rulePath, string textPath, string resultPath)
         {
-            _ruleTxtPath = rulePath;
-            _textTxtPath = textPath;
+            _rulesPath = rulePath;
+            _textPath = textPath;
 
-            _resultTxtPath =  Path.Combine(Environment.CurrentDirectory, "Result.txt");
+            _resultPath = resultPath;
 
             _allRulesPrototypes = new List<IRule>();
             _container = new Container();
@@ -34,8 +34,9 @@ namespace Runner
             _sortedOutputLines = new SortedList<long, string>();
         }
 
-        public void InitRuleFactories(string path)
+        public void InitRuleFactories()
         {
+            var path = Path.Combine(Environment.CurrentDirectory, "Matcher.BaseRules.dll");
             var assembly = Assembly.LoadFile(path);
 
             _container.RegisterCollection(typeof(IRule), assembly);
@@ -44,9 +45,9 @@ namespace Runner
             _allRulesPrototypes.AddRange(ruleTemplates);
         }
 
-        public void InstansiateRules(string rulePath)
+        public void InstansiateRules()
         {
-            var ruleLines = File.ReadAllLines(rulePath);
+            var ruleLines = File.ReadAllLines(_rulesPath);
             foreach (var ruleLine in ruleLines)
             {
                 AddRuleFromLine(ruleLine);
@@ -56,18 +57,16 @@ namespace Runner
         private readonly BlockingCollection<OutputLine> _outputLines;
         private long _lastFlushedIndex = -1;
 
-        public void RunTheApplyRule(string textPath)
+        public void RunTheApplyRule()
         {
             var applyRule = _ruleBacket.GetRule("APPLY");
 
             var consumerTask = Consume();
-            Parallel.ForEach(File.ReadLines(textPath), (line, state, linenumber) =>
+            Parallel.ForEach(File.ReadLines(_textPath), (line, state, linenumber) =>
             {
-                if (applyRule.IsMatch(line))
-                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = linenumber + ":" + line});
-                else
-                    _outputLines.Add(new OutputLine(){LineNumber = linenumber, Line = null});
-
+                _outputLines.Add(applyRule.IsMatch(line)
+                    ? new OutputLine() {LineNumber = linenumber, Line = linenumber + ":" + line}
+                    : new OutputLine() {LineNumber = linenumber, Line = null});
             });
             _outputLines.CompleteAdding();
             consumerTask.Wait();
@@ -106,7 +105,7 @@ namespace Runner
 
         private void FlushLinesToOutput()
         {     
-            File.AppendAllLines(_resultTxtPath, _sortedOutputLines.Values.Where(x => x != null));
+            File.AppendAllLines(_resultPath, _sortedOutputLines.Values.Where(x => x != null));
             _sortedOutputLines.Clear();
         }
 
