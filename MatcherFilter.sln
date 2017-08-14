@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcher.BaseRules", "Matche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{56A7660D-7855-4410-BE11-5EB8A56D51C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtraRules", "ExtraRules\ExtraRules.csproj", "{378F4F04-3F06-4885-9FEB-1184D6F70BE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A7660D-7855-4410-BE11-5EB8A56D51C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{378F4F04-3F06-4885-9FEB-1184D6F70BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{378F4F04-3F06-4885-9FEB-1184D6F70BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{378F4F04-3F06-4885-9FEB-1184D6F70BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{378F4F04-3F06-4885-9FEB-1184D6F70BE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,13 +7,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Matcher.Contracts;
 using SimpleInjector;
+using SimpleInjector.Advanced;
 
 
 namespace Runner
 {
     public class Runner
     {
-        readonly Container _container;
+        private readonly Container _container;
         private readonly List<IRule> _allRulesPrototypes;
         private readonly SortedList<long, string> _sortedOutputLines;
         private readonly RuleBacket _ruleBacket = new RuleBacket();
@@ -38,11 +39,20 @@ namespace Runner
         {
             var path = Path.Combine(Environment.CurrentDirectory, "Matcher.BaseRules.dll");
             var assembly = Assembly.LoadFile(path);
+            var assemblies = new List<Assembly> {assembly};
+            InitExtraRule(assemblies);
 
-            _container.RegisterCollection(typeof(IRule), assembly);
+            _container.RegisterCollection(typeof(IRule), assemblies);
+
             _container.Verify();
             var ruleTemplates  = _container.GetAllInstances<IRule>();
             _allRulesPrototypes.AddRange(ruleTemplates);
+        }
+
+        private void InitExtraRule(List<Assembly> assemblies)
+        {
+            var assemblyPaths = Directory.GetFiles(Environment.CurrentDirectory, "ContentFilter.*.Rules.dll");
+            assemblies.AddRange(assemblyPaths.Select(assemblyPath => Assembly.LoadFile(assemblyPath)));
         }
 
         public void InstansiateRules()
