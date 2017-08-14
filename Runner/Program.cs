@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
+using Matcher.Manager;
 
 
 namespace Runner
@@ -34,18 +35,6 @@ namespace Runner
             } while (!options.Quit);
 
             Console.WriteLine("Thank you for using this app.");
-
-
-            //var rulesDllPath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Matcher.BaseRules\bin\Debug\Matcher.BaseRules.dll";
-            //var rulePath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Rules.txt";
-            //var textPath = @"C:\Repos\Mos\MatcherRepo\MatcherFilter\Text.txt";
-
-            //var runner = new Runner(rulePath, textPath);
-            //runner.InitRuleFactories(rulesDllPath);
-            //runner.InstansiateRules(rulePath);
-            //runner.RunTheApplyRule(textPath);
-
-            //Console.ReadKey();
         }
 
         private static void ValidateArgumentAndRun(Options options)
@@ -74,7 +63,7 @@ namespace Runner
 
             Console.WriteLine("Working...\n");
 
-            var runner = new Runner(options.RulesFile, options.InputFile, options.ResultFile);
+            var runner = new RulesRunner(options.RulesFile, options.InputFile, options.ResultFile);
             runner.InitRuleFactories();
             runner.InstansiateRules();
             runner.RunTheApplyRule();

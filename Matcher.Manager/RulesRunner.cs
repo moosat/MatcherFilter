@@ -6,30 +6,32 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Matcher.Contracts;
+using Runner;
 using SimpleInjector;
-using SimpleInjector.Advanced;
 
-
-namespace Runner
+namespace Matcher.Manager
 {
-    public class Runner
+    public class RulesRunner
     {
         private readonly Container _container;
-        private readonly List<IRule> _allRulesPrototypes;
+        private readonly Dictionary<string, IRule> _allRulesPrototypes;
         private readonly SortedList<long, string> _sortedOutputLines;
         private readonly RuleBacket _ruleBacket = new RuleBacket();
         private readonly string _resultPath;
         private readonly string _textPath;
         private readonly string _rulesPath;
+        private readonly BlockingCollection<OutputLine> _outputLines;
+        private long _lastFlushedIndex = -1;
 
-        public Runner(string rulePath, string textPath, string resultPath)
+
+        public RulesRunner(string rulePath, string textPath, string resultPath)
         {
             _rulesPath = rulePath;
             _textPath = textPath;
 
             _resultPath = resultPath;
 
-            _allRulesPrototypes = new List<IRule>();
+            _allRulesPrototypes = new Dictionary<string, IRule>();
             _container = new Container();
             _outputLines = new BlockingCollection<OutputLine>(100);
             _sortedOutputLines = new SortedList<long, string>();
@@ -46,7 +48,10 @@ namespace Runner
 
             _container.Verify();
             var ruleTemplates  = _container.GetAllInstances<IRule>();
-            _allRulesPrototypes.AddRange(ruleTemplates);
+            foreach (var ruleTemplate in ruleTemplates)
+            {
+                _allRulesPrototypes.Add(ruleTemplate.TypeName, ruleTemplate);
+            }
         }
 
         private void InitExtraRule(List<Assembly> assemblies)
@@ -63,9 +68,6 @@ namespace Runner
                 AddRuleFromLine(ruleLine);
             }
         }
-
-        private readonly BlockingCollection<OutputLine> _outputLines;
-        private long _lastFlushedIndex = -1;
 
         public void RunTheApplyRule()
         {
@@ -122,27 +124,12 @@ namespace Runner
 
         private void AddRuleFromLine(string ruleLine)
         {
-            var ruleElements = ruleLine.Split(' ').ToList();
-            var ruleName = ruleElements[0].Replace(":","");
-            var ruleType  = ruleElements[1];
-            ruleElements.RemoveAt(0);
-            ruleElements.RemoveAt(0);
-            var ruleContent = string.Join(" ", ruleElements);
-            if (ruleName == "APPLY")
-            {
-                ruleContent = ruleType;
-                ruleType = ruleName;
-            }
-            var rulePrototype = _allRulesPrototypes.Find(x => x.TypeName == ruleType); // change to dictionary
-            var instanseRule = rulePrototype.Clone();
-            instanseRule.InitRule(ruleName, ruleContent, _ruleBacket);
-            _ruleBacket.AddRule(instanseRule);           
+            RuleParser.AddNewRuleToBacket(ruleLine, _allRulesPrototypes, _ruleBacket);
         }
         private class OutputLine
         {
             public string Line { get; set; }
             public long LineNumber { get; set; }
         }
-
     }
 }
