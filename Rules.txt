@@ -1,7 +1,0 @@
-R1: BeginWith "hello"
-R2: EndWith "bye"
-R3: Contain "world"
-R4: AND R1 R2
-R5: NOT R3
-R6: OR R4 R5
-APPLY R6

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
 using Matcher.Manager;
 
-
-namespace Runner
+namespace MatherFilter.Main
 {
     class Program
     {
