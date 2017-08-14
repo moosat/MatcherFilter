@@ -43,10 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleBacket.cs" />
     <Compile Include="RuleParser.cs" />
+    <Compile Include="RulesPrototypes.cs" />
     <Compile Include="RulesRunner.cs" />
   </ItemGroup>
   <ItemGroup>

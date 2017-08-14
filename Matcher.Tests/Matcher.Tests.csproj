@@ -53,11 +53,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="BasicRulesShould.cs" />
+    <Compile Include="ComplextRuleShould.cs" />
+    <Compile Include="RuleRunnerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Matcher.BaseRules\Matcher.BaseRules.csproj">
+      <Project>{1bbcb2dc-3d70-492c-8219-f3fc170087f1}</Project>
+      <Name>Matcher.BaseRules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Matcher.Contracts\Matcher.Contracts.csproj">
+      <Project>{c91808ac-44b3-4464-9ea0-da3e54c53c16}</Project>
+      <Name>Matcher.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Matcher.Manager\Matcher.Manager.csproj">
+      <Project>{46bb63fc-b940-4c28-826c-21e6db0ed6ae}</Project>
+      <Name>Matcher.Manager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

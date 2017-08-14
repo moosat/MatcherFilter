@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Matcher.Contracts;
-using Runner;
 using SimpleInjector;
 
 namespace Matcher.Manager
@@ -14,7 +13,7 @@ namespace Matcher.Manager
     public class RulesRunner
     {
         private readonly Container _container;
-        private readonly Dictionary<string, IRule> _allRulesPrototypes;
+        private readonly RulesPrototypes _allRulesPrototypes;
         private readonly SortedList<long, string> _sortedOutputLines;
         private readonly RuleBacket _ruleBacket = new RuleBacket();
         private readonly string _resultPath;
@@ -31,7 +30,7 @@ namespace Matcher.Manager
 
             _resultPath = resultPath;
 
-            _allRulesPrototypes = new Dictionary<string, IRule>();
+            _allRulesPrototypes = new RulesPrototypes();
             _container = new Container();
             _outputLines = new BlockingCollection<OutputLine>(100);
             _sortedOutputLines = new SortedList<long, string>();
@@ -50,7 +49,7 @@ namespace Matcher.Manager
             var ruleTemplates  = _container.GetAllInstances<IRule>();
             foreach (var ruleTemplate in ruleTemplates)
             {
-                _allRulesPrototypes.Add(ruleTemplate.TypeName, ruleTemplate);
+                _allRulesPrototypes.AddRuleProptotype(ruleTemplate);
             }
         }
 
